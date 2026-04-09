@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: sans-serif; text-align: center; }
+    .grid { display: grid; grid-template-columns: repeat(5, 40px); gap: 5px; margin: 20px auto; width: max-content; }
+    .cell { width: 40px; height: 40px; background: lightgray; }
+    .correct { background: black; }
+  </style>
+</head>
+<body>
+
+<h2>Conjugate the verb</h2>
+<p>Yo (hablar):</p>
+
+<input id="answer" placeholder="type answer">
+<button onclick="checkAnswer()">Check</button>
+
+<div class="grid" id="grid"></div>
+
+<script>
+const correctAnswers = ["hablo", "comes", "vive"];
+let current = 0;
+
+const grid = document.getElementById("grid");
+
+// create 15 squares
+for (let i = 0; i < 15; i++) {
+  let div = document.createElement("div");
+  div.classList.add("cell");
+  grid.appendChild(div);
+}
+
+function checkAnswer() {
+  let input = document.getElementById("answer").value.toLowerCase();
+
+  if (input === correctAnswers[current]) {
+    grid.children[current].classList.add("correct");
+    current++;
+    document.getElementById("answer").value = "";
+
+    if (current === correctAnswers.length) {
+      alert("Finished!");
+    }
+  } else {
+    alert("Try again");
+  }
+}
+</script>
+
+</body>
+</html>
