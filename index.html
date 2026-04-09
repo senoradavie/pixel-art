@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Teacher Pro Pixel Art V2</title>
+  <title>Pixel Art Teacher Pro V3</title>
 
   <style>
     body {
       font-family: Arial;
       text-align: center;
-      background: #f7fff7;
+      background: #f4fff4;
     }
-
-    h1 { margin-top: 15px; }
 
     input {
       padding: 8px;
@@ -23,7 +21,7 @@
     }
 
     #question {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: bold;
       margin: 15px;
     }
@@ -50,7 +48,7 @@
 
 <body>
 
-<h1>🌸 Pixel Art Teacher Pro V2</h1>
+<h1>🌸 Pixel Art Teacher Pro V3</h1>
 
 <input id="name" placeholder="Student Name">
 <input id="period" placeholder="Period">
@@ -65,57 +63,50 @@
 <script>
 
 /* =========================
-   🔧 QUESTION + IMAGE BANK
+   🔧 LEVEL SYSTEM
    ========================= */
 
-const levels = [
-  {
-    // 🌸 LEVEL 1 (tulip)
-    items: [
-      { q: "yo ___ (hablar)", a: "hablo" },
-      { q: "tú ___ (comer)", a: "comes" },
-      { q: "él ___ (vivir)", a: "vive" },
-      { q: "nosotros ___ (hablar)", a: "hablamos" }
-    ],
+const level = {
+  questionBank: [
+    { q: "yo (hablar)", a: "hablo" },
+    { q: "tú (comer)", a: "comes" },
+    { q: "él (vivir)", a: "vive" },
+    { q: "nosotros (hablar)", a: "hablamos" },
+    { q: "ella (tener)", a: "tiene" },
+    { q: "ellos (ir)", a: "van" },
+    { q: "yo (ser)", a: "soy" },
+    { q: "tú (estar)", a: "estás" }
+  ],
 
-    // MULTI PIXEL PER ANSWER (tulip shape)
-    pattern: [
-      [2,3],
-      [7,8],
-      [12,13,14],
-      [18],
-    ]
-  },
+  // EACH GROUP = ONE QUESTION SLOT
+  patternGroups: [
+    [2,3],
+    [7,8],
+    [12,13,14],
+    [18],
+    [20,21],
+    [25]
+  ]
+};
 
-  {
-    // 🌼 LEVEL 2 (sun)
-    items: [
-      { q: "yo ___ (vivir)", a: "vivo" },
-      { q: "tú ___ (ser)", a: "eres" },
-      { q: "él ___ (tener)", a: "tiene" },
-      { q: "ellas ___ (ir)", a: "van" }
-    ],
+/* =========================
+   RANDOMIZER (REAL BANK SYSTEM)
+   ========================= */
 
-    // sun pattern
-    pattern: [
-      [0,1,2],
-      [6,7,8],
-      [12,13,14],
-      [18,19],
-    ]
+function shuffle(arr) {
+  let a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
-];
+  return a;
+}
+
+const questions = shuffle(level.questionBank)
+  .slice(0, level.patternGroups.length);
 
 /* =========================
-   RANDOM LEVEL SELECTOR
-   ========================= */
-
-const level = levels[Math.floor(Math.random() * levels.length)];
-const items = level.items;
-const pattern = level.pattern;
-
-/* =========================
-   SETUP GAME
+   GAME STATE
    ========================= */
 
 const SCRIPT_URL = "PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE";
@@ -126,27 +117,33 @@ const questionEl = document.getElementById("question");
 let current = 0;
 let score = 0;
 
-// build grid
+/* =========================
+   BUILD GRID
+   ========================= */
+
 for (let i = 0; i < 36; i++) {
   let div = document.createElement("div");
   div.classList.add("cell");
   grid.appendChild(div);
 }
 
-// show first question
-questionEl.innerText = items[current].q;
+/* =========================
+   SHOW FIRST QUESTION
+   ========================= */
+
+questionEl.innerText = questions[current].q;
 
 /* =========================
-   GAME LOGIC
+   CHECK ANSWER
    ========================= */
 
 function check() {
   let input = document.getElementById("answer").value.toLowerCase().trim();
 
-  if (input === items[current].a) {
+  if (input === questions[current].a) {
 
-    // MULTIPLE PIXELS PER QUESTION
-    pattern[current].forEach(i => {
+    // MULTI PIXEL FILL
+    level.patternGroups[current].forEach(i => {
       grid.children[i].classList.add("correct");
     });
 
@@ -155,11 +152,11 @@ function check() {
 
     document.getElementById("answer").value = "";
 
-    if (current < items.length) {
-      questionEl.innerText = items[current].q;
+    if (current < questions.length) {
+      questionEl.innerText = questions[current].q;
     } else {
       questionEl.innerText = "🌸 Completed!";
-      alert("Score: " + score + "/" + items.length);
+      alert("Score: " + score + "/" + questions.length);
 
       sendData();
     }
@@ -180,11 +177,11 @@ function sendData() {
       name: document.getElementById("name").value,
       period: document.getElementById("period").value,
       score: score,
-      total: items.length,
-      level: "random"
+      total: questions.length
     })
   });
 }
+
 </script>
 
 </body>
