@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Pixel Art Teacher Pro V3</title>
+  <title>Pixel Art Teacher Pro V4</title>
 
   <style>
     body {
@@ -48,7 +48,7 @@
 
 <body>
 
-<h1>🌸 Pixel Art Teacher Pro V3</h1>
+<h1>🌸 Pixel Art Teacher Pro V4</h1>
 
 <input id="name" placeholder="Student Name">
 <input id="period" placeholder="Period">
@@ -63,34 +63,63 @@
 <script>
 
 /* =========================
-   🔧 LEVEL SYSTEM
+   🌼 QUESTION BANK (shared)
    ========================= */
 
-const level = {
-  questionBank: [
-    { q: "yo (hablar)", a: "hablo" },
-    { q: "tú (comer)", a: "comes" },
-    { q: "él (vivir)", a: "vive" },
-    { q: "nosotros (hablar)", a: "hablamos" },
-    { q: "ella (tener)", a: "tiene" },
-    { q: "ellos (ir)", a: "van" },
-    { q: "yo (ser)", a: "soy" },
-    { q: "tú (estar)", a: "estás" }
-  ],
-
-  // EACH GROUP = ONE QUESTION SLOT
-  patternGroups: [
-    [2,3],
-    [7,8],
-    [12,13,14],
-    [18],
-    [20,21],
-    [25]
-  ]
-};
+const questionBank = [
+  { q: "yo (hablar)", a: "hablo" },
+  { q: "tú (comer)", a: "comes" },
+  { q: "él (vivir)", a: "vive" },
+  { q: "nosotros (hablar)", a: "hablamos" },
+  { q: "ella (tener)", a: "tiene" },
+  { q: "ellos (ir)", a: "van" },
+  { q: "yo (ser)", a: "soy" },
+  { q: "tú (estar)", a: "estás" },
+  { q: "ella (hablar)", a: "habla" },
+  { q: "nosotros (comer)", a: "comemos" }
+];
 
 /* =========================
-   RANDOMIZER (REAL BANK SYSTEM)
+   🌸 3 PIXEL ART IMAGES
+   ========================= */
+
+const images = [
+  {
+    name: "tulip",
+    patternGroups: [
+      [2,3],
+      [7,8],
+      [12,13,14],
+      [18],
+      [19,20]
+    ]
+  },
+
+  {
+    name: "sun",
+    patternGroups: [
+      [0,1,2],
+      [6,7,8],
+      [12,13,14],
+      [18,19],
+      [24]
+    ]
+  },
+
+  {
+    name: "sunflower",
+    patternGroups: [
+      [1,2,3],
+      [7,8],
+      [13,14,15],
+      [19,20],
+      [25,26]
+    ]
+  }
+];
+
+/* =========================
+   🎲 RANDOM SELECTION
    ========================= */
 
 function shuffle(arr) {
@@ -102,11 +131,15 @@ function shuffle(arr) {
   return a;
 }
 
-const questions = shuffle(level.questionBank)
-  .slice(0, level.patternGroups.length);
+// pick random image
+const selectedImage = images[Math.floor(Math.random() * images.length)];
+
+// pick random questions matching number of pixel groups
+const questions = shuffle(questionBank)
+  .slice(0, selectedImage.patternGroups.length);
 
 /* =========================
-   GAME STATE
+   GAME SETUP
    ========================= */
 
 const SCRIPT_URL = "PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE";
@@ -117,24 +150,17 @@ const questionEl = document.getElementById("question");
 let current = 0;
 let score = 0;
 
-/* =========================
-   BUILD GRID
-   ========================= */
-
+// build grid (6x6 = 36 cells)
 for (let i = 0; i < 36; i++) {
   let div = document.createElement("div");
   div.classList.add("cell");
   grid.appendChild(div);
 }
 
-/* =========================
-   SHOW FIRST QUESTION
-   ========================= */
-
 questionEl.innerText = questions[current].q;
 
 /* =========================
-   CHECK ANSWER
+   GAME LOGIC
    ========================= */
 
 function check() {
@@ -142,8 +168,8 @@ function check() {
 
   if (input === questions[current].a) {
 
-    // MULTI PIXEL FILL
-    level.patternGroups[current].forEach(i => {
+    // fill multiple pixels
+    selectedImage.patternGroups[current].forEach(i => {
       grid.children[i].classList.add("correct");
     });
 
@@ -155,7 +181,7 @@ function check() {
     if (current < questions.length) {
       questionEl.innerText = questions[current].q;
     } else {
-      questionEl.innerText = "🌸 Completed!";
+      questionEl.innerText = "🌸 Completed " + selectedImage.name + "!";
       alert("Score: " + score + "/" + questions.length);
 
       sendData();
@@ -167,7 +193,7 @@ function check() {
 }
 
 /* =========================
-   SEND TO GOOGLE SHEETS
+   SEND DATA (Google Sheets)
    ========================= */
 
 function sendData() {
@@ -177,7 +203,8 @@ function sendData() {
       name: document.getElementById("name").value,
       period: document.getElementById("period").value,
       score: score,
-      total: questions.length
+      total: questions.length,
+      image: selectedImage.name
     })
   });
 }
