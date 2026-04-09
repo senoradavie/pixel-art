@@ -2,16 +2,41 @@
 <html>
 <head>
   <title>Spring Pixel Art</title>
+
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       text-align: center;
+      background: #f7fff7;
+    }
+
+    h1 {
+      margin-top: 20px;
+    }
+
+    #question {
+      font-size: 22px;
+      margin: 20px;
+      font-weight: bold;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 16px;
+      width: 200px;
+    }
+
+    button {
+      padding: 10px 15px;
+      font-size: 16px;
+      margin-left: 5px;
+      cursor: pointer;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(6, 50px);
-      margin: 20px auto;
+      margin: 30px auto;
       width: max-content;
     }
 
@@ -23,75 +48,88 @@
     }
 
     .correct {
-      background: transparent;
-    }
-
-    input {
-      padding: 8px;
-      font-size: 16px;
+      background: #4caf50;
     }
   </style>
 </head>
 
 <body>
 
-<h2>🌸 Spring Pixel Art Activity</h2>
+<h1>🌸 Spring Pixel Art Activity</h1>
 
-<p>Type the correct answer to reveal the picture!</p>
+<div id="question">Loading...</div>
 
-<input id="answer" placeholder="Type answer here">
+<input id="answer" placeholder="Type answer">
 <button onclick="check()">Submit</button>
 
 <div class="grid" id="grid"></div>
 
 <script>
-const grid = document.getElementById("grid");
+/* =========================
+   🌸 EDIT ONLY THIS SECTION
+   ========================= */
 
-// 🌸 SPRING PIXEL ART PATTERN (6x6 = 36 squares)
-// This draws a simple tulip + sun + grass shape
+// Questions + Answers (match order!)
+const items = [
+  { question: "yo ___ (hablar)", answer: "hablo" },
+  { question: "tú ___ (comer)", answer: "comes" },
+  { question: "él ___ (vivir)", answer: "vive" },
+  { question: "nosotros ___ (hablar)", answer: "hablamos" },
+  { question: "ellos ___ (comer)", answer: "comen" },
+  { question: "yo ___ (vivir)", answer: "vivo" }
+];
+
+// Pixel positions to reveal (6x6 grid = 36 squares)
 const pattern = [
   2, 3, 4,
   7, 8, 9,
   12, 13, 14,
-  19,
-  22, 23, 24,
+  18,
+  21, 22, 23,
   27, 28, 29,
   32, 33, 34
 ];
 
-// 🧠 ANSWERS (CHANGE THESE for your class!)
-const answers = [
-  "a", "b", "c",
-  "d", "e", "f",
-  "g", "h", "i",
-  "j", "k", "l",
-  "m", "n", "o",
-  "p", "q", "r",
-  "s", "t"
-];
+/* =========================
+   DO NOT EDIT BELOW THIS LINE
+   ========================= */
+
+const grid = document.getElementById("grid");
+const questionEl = document.getElementById("question");
 
 let current = 0;
 
-// build grid
+// Build grid
 for (let i = 0; i < 36; i++) {
   let div = document.createElement("div");
   div.classList.add("cell");
   grid.appendChild(div);
 }
 
-function check() {
-  let input = document.getElementById("answer").value.toLowerCase();
+// Show first question
+questionEl.innerText = items[current].question;
 
-  if (input === answers[current]) {
+function check() {
+  let input = document.getElementById("answer").value.toLowerCase().trim();
+
+  if (input === items[current].answer) {
+
+    // reveal pixel
     grid.children[pattern[current]].classList.add("correct");
+
     current++;
     document.getElementById("answer").value = "";
+
+    // next question or finish
+    if (current < items.length) {
+      questionEl.innerText = items[current].question;
+    } else {
+      questionEl.innerText = "🌸 You revealed the spring picture!";
+      alert("Great job!");
+    }
+
   } else {
     alert("Try again!");
-  }
-
-  if (current === answers.length) {
-    alert("🌸 You revealed the spring picture!");
   }
 }
 </script>
