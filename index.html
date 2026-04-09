@@ -1,42 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Spring Pixel Art</title>
+  <title>Teacher Pro Pixel Art</title>
 
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       text-align: center;
       background: #f7fff7;
     }
 
-    h1 {
-      margin-top: 20px;
-    }
-
-    #question {
-      font-size: 22px;
-      margin: 20px;
-      font-weight: bold;
-    }
+    h1 { margin-top: 20px; }
 
     input {
-      padding: 10px;
-      font-size: 16px;
-      width: 200px;
+      padding: 8px;
+      margin: 5px;
+      font-size: 14px;
     }
 
     button {
       padding: 10px 15px;
-      font-size: 16px;
-      margin-left: 5px;
+      font-size: 14px;
       cursor: pointer;
+    }
+
+    #question {
+      font-size: 20px;
+      font-weight: bold;
+      margin: 15px;
     }
 
     .grid {
       display: grid;
       grid-template-columns: repeat(6, 50px);
-      margin: 30px auto;
+      margin: 20px auto;
       width: max-content;
     }
 
@@ -55,7 +52,11 @@
 
 <body>
 
-<h1>🌸 Spring Pixel Art Activity</h1>
+<h1>🌸 Pixel Art Teacher Pro</h1>
+
+<input id="name" placeholder="Student Name">
+<input id="period" placeholder="Period">
+<br>
 
 <div id="question">Loading...</div>
 
@@ -65,11 +66,13 @@
 <div class="grid" id="grid"></div>
 
 <script>
+
 /* =========================
-   🌸 EDIT ONLY THIS SECTION
+   🔧 EDIT THIS SECTION ONLY
    ========================= */
 
-// Questions + Answers (match order!)
+const SCRIPT_URL = "PASTE_YOUR_GOOGLE_SCRIPT_URL_HERE";
+
 const items = [
   { question: "yo ___ (hablar)", answer: "hablo" },
   { question: "tú ___ (comer)", answer: "comes" },
@@ -77,22 +80,9 @@ const items = [
   { question: "nosotros ___ (hablar)", answer: "hablamos" },
   { question: "ellos ___ (comer)", answer: "comen" },
   { question: "yo ___ (vivir)", answer: "vivo" }
-  { question: "12", answer: "12" }
-    { question: "13", answer: "13" }
-    { question: "14", answer: "14" }
-    { question: "12", answer: "12" }
-    { question: "12", answer: "12" }
-    { question: "12", answer: "12" }
-    { question: "12", answer: "12" }
-    { question: "12", answer: "12" }
-    { question: "12", answer: "12" }
-    { question: "12", answer: "12" }
-    { question: "12", answer: "12" }
-    { question: "12", answer: "12" }
-    { question: "32", answer: "32" }
 ];
 
-// Pixel positions to reveal (6x6 grid = 36 squares)
+// Pixel pattern (6x6 grid = 36 cells)
 const pattern = [
   2, 3, 4,
   7, 8, 9,
@@ -104,22 +94,23 @@ const pattern = [
 ];
 
 /* =========================
-   DO NOT EDIT BELOW THIS LINE
+   DO NOT EDIT BELOW
    ========================= */
 
 const grid = document.getElementById("grid");
 const questionEl = document.getElementById("question");
 
 let current = 0;
+let score = 0;
 
-// Build grid
+// build grid
 for (let i = 0; i < 36; i++) {
   let div = document.createElement("div");
   div.classList.add("cell");
   grid.appendChild(div);
 }
 
-// Show first question
+// show first question
 questionEl.innerText = items[current].question;
 
 function check() {
@@ -127,23 +118,41 @@ function check() {
 
   if (input === items[current].answer) {
 
-    // reveal pixel
     grid.children[pattern[current]].classList.add("correct");
 
     current++;
+    score++;
+
     document.getElementById("answer").value = "";
 
-    // next question or finish
     if (current < items.length) {
       questionEl.innerText = items[current].question;
     } else {
-      questionEl.innerText = "🌸 You revealed the spring picture!";
-      alert("Great job!");
+
+      questionEl.innerText = "🌸 Completed!";
+      alert("Great job! Your score is " + score + "/" + items.length);
+
+      sendData();
     }
 
   } else {
     alert("Try again!");
   }
+}
+
+function sendData() {
+  let name = document.getElementById("name").value;
+  let period = document.getElementById("period").value;
+
+  fetch(SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      name: name,
+      period: period,
+      score: score,
+      total: items.length
+    })
+  });
 }
 </script>
 
