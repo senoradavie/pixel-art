@@ -1,49 +1,97 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <title>Spring Pixel Art</title>
   <style>
-    body { font-family: sans-serif; text-align: center; }
-    .grid { display: grid; grid-template-columns: repeat(5, 40px); gap: 5px; margin: 20px auto; width: max-content; }
-    .cell { width: 40px; height: 40px; background: lightgray; }
-    .correct { background: black; }
+    body {
+      font-family: Arial;
+      text-align: center;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(6, 50px);
+      margin: 20px auto;
+      width: max-content;
+    }
+
+    .cell {
+      width: 50px;
+      height: 50px;
+      border: 1px solid #ddd;
+      background: white;
+    }
+
+    .correct {
+      background: transparent;
+    }
+
+    input {
+      padding: 8px;
+      font-size: 16px;
+    }
   </style>
 </head>
+
 <body>
 
-<h2>Conjugate the verb</h2>
-<p>Yo (hablar):</p>
+<h2>🌸 Spring Pixel Art Activity</h2>
 
-<input id="answer" placeholder="type answer">
-<button onclick="checkAnswer()">Check</button>
+<p>Type the correct answer to reveal the picture!</p>
+
+<input id="answer" placeholder="Type answer here">
+<button onclick="check()">Submit</button>
 
 <div class="grid" id="grid"></div>
 
 <script>
-const correctAnswers = ["hablo", "comes", "vive"];
-let current = 0;
-
 const grid = document.getElementById("grid");
 
-// create 15 squares
-for (let i = 0; i < 15; i++) {
+// 🌸 SPRING PIXEL ART PATTERN (6x6 = 36 squares)
+// This draws a simple tulip + sun + grass shape
+const pattern = [
+  2, 3, 4,
+  7, 8, 9,
+  12, 13, 14,
+  19,
+  22, 23, 24,
+  27, 28, 29,
+  32, 33, 34
+];
+
+// 🧠 ANSWERS (CHANGE THESE for your class!)
+const answers = [
+  "a", "b", "c",
+  "d", "e", "f",
+  "g", "h", "i",
+  "j", "k", "l",
+  "m", "n", "o",
+  "p", "q", "r",
+  "s", "t"
+];
+
+let current = 0;
+
+// build grid
+for (let i = 0; i < 36; i++) {
   let div = document.createElement("div");
   div.classList.add("cell");
   grid.appendChild(div);
 }
 
-function checkAnswer() {
+function check() {
   let input = document.getElementById("answer").value.toLowerCase();
 
-  if (input === correctAnswers[current]) {
-    grid.children[current].classList.add("correct");
+  if (input === answers[current]) {
+    grid.children[pattern[current]].classList.add("correct");
     current++;
     document.getElementById("answer").value = "";
-
-    if (current === correctAnswers.length) {
-      alert("Finished!");
-    }
   } else {
-    alert("Try again");
+    alert("Try again!");
+  }
+
+  if (current === answers.length) {
+    alert("🌸 You revealed the spring picture!");
   }
 }
 </script>
